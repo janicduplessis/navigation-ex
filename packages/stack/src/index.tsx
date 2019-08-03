@@ -1,7 +1,6 @@
-/* eslint-disable react-native/no-inline-styles */
-
 import * as React from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, StatusBar, StyleSheet } from 'react-native';
+import { getStatusBarHeight } from 'react-native-safe-area-view';
 import {
   useNavigationBuilder,
   NavigationProp,
@@ -65,41 +64,43 @@ export function StackNavigator(props: Props) {
   >(StackRouter, props);
 
   return (
-    <View>
-      {state.routes.map((route, i) => (
-        <View
-          key={route.key}
-          style={{
-            position: 'absolute',
-            margin: 20,
-            left: i * 20,
-            top: i * 20,
-            padding: 10,
-            height: 480,
-            width: 320,
-            backgroundColor: 'white',
-            borderRadius: 3,
-          }}
-        >
-          {descriptors[route.key].render()}
+    <React.Fragment>
+      {state.routes.map(route => (
+        <View key={route.key} style={StyleSheet.absoluteFill}>
+          <View style={styles.header}>
+            <View style={styles.headerContent}>
+              <Text style={styles.title}>
+                {descriptors[route.key].options.title}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.content}>{descriptors[route.key].render()}</View>
         </View>
       ))}
-      <View
-        style={{
-          position: 'absolute',
-          left: 40,
-          width: 120,
-          padding: 10,
-          backgroundColor: 'tomato',
-          borderRadius: 3,
-        }}
-      >
-        <Text>{descriptors[state.routes[state.index].key].options.title}</Text>
-      </View>
-    </View>
+    </React.Fragment>
   );
 }
 
 export default createNavigator<StackNavigationOptions, typeof StackNavigator>(
   StackNavigator
 );
+
+const styles = StyleSheet.create({
+  content: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  header: {
+    backgroundColor: '#2B98F0',
+  },
+  headerContent: {
+    marginTop: getStatusBarHeight(false) || StatusBar.currentHeight,
+    flexDirection: 'row',
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    margin: 12,
+  },
+});
