@@ -4,6 +4,7 @@ import {
   StackRouter,
   StackRouterOptions,
   StackNavigationState,
+  StackActions,
 } from '@navigation-ex/routers';
 import KeyboardManager from '../views/KeyboardManager';
 import StackView from '../views/Stack/StackView';
@@ -29,6 +30,20 @@ function StackNavigator({
     initialRouteName,
     children,
   });
+
+  React.useEffect(
+    () =>
+      navigation.addListener &&
+      navigation.addListener('refocus', e => {
+        if (state.index > 0 && !e.defaultPrevented) {
+          navigation.dispatch({
+            ...StackActions.popToTop(),
+            target: state.key,
+          });
+        }
+      }),
+    [navigation, state.index, state.key]
+  );
 
   return (
     <KeyboardManager enabled={keyboardHandlingEnabled !== false}>
