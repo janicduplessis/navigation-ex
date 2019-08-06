@@ -217,11 +217,14 @@ class StackView extends React.Component<Props, State> {
   };
 
   private handleGoBack = ({ route }: { route: Route<string> }) => {
+    const { state, navigation } = this.props;
+
     // This event will trigger when a gesture ends
     // We need to perform the transition before removing the route completely
-    this.props.navigation.dispatch({
+    navigation.dispatch({
       ...StackActions.pop(),
       source: route.key,
+      target: state.key,
     });
   };
 

@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { StyleSheet, View, ViewStyle, StyleProp } from 'react-native';
 import Animated from 'react-native-reanimated';
-import { NavigationHelpers, ParamListBase, Route } from '@navigation-ex/core';
+import {
+  NavigationHelpers,
+  ParamListBase,
+  Route,
+  BaseActions,
+} from '@navigation-ex/core';
 import { DrawerActions, DrawerNavigationState } from '@navigation-ex/routers';
 
 import { Scene, ContentComponentProps, DrawerDescriptorMap } from '../types';
@@ -65,11 +70,14 @@ class DrawerSidebar extends React.PureComponent<Props> {
     route: Route<string>;
     focused: boolean;
   }) => {
-    if (focused) {
-      this.props.navigation.dispatch(DrawerActions.closeDrawer());
-    } else {
-      this.props.navigation.navigate(route.name, {});
-    }
+    const { state, navigation } = this.props;
+
+    navigation.dispatch({
+      ...(focused
+        ? DrawerActions.closeDrawer()
+        : BaseActions.navigate(route.name)),
+      target: state.key,
+    });
   };
 
   render() {
