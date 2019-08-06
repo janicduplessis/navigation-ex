@@ -1,5 +1,3 @@
-/* eslint-env node */
-
 import * as CardStyleInterpolators from './TransitionConfigs/CardStyleInterpolators';
 import * as HeaderStyleInterpolators from './TransitionConfigs/HeaderStyleInterpolators';
 import * as TransitionPresets from './TransitionConfigs/TransitionPresets';

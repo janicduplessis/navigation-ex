@@ -1,5 +1,3 @@
-/* eslint-env node */
-
 import * as React from 'react';
 import {
   I18nManager,

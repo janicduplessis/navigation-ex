@@ -1,5 +1,3 @@
-/* eslint-env node */
-
 import * as React from 'react';
 import {
   View,
@@ -324,7 +322,7 @@ export default class HeaderSegment extends React.Component<Props, State> {
               style={[
                 Platform.select({
                   ios: null,
-                  default: { left: onGoBack ? 72 : 16 },
+                  default: { left: left ? 72 : 16 },
                 }),
                 styles.title,
                 titleStyle,

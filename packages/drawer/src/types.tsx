@@ -38,11 +38,11 @@ export type DrawerNavigationConfig = {
 };
 
 export type DrawerNavigationOptions = {
-  title: string;
-  drawerLabel:
+  title?: string;
+  drawerLabel?:
     | string
     | ((props: { tintColor?: string; focused: boolean }) => React.ReactElement);
-  drawerIcon: (props: {
+  drawerIcon?: (props: {
     tintColor?: string;
     focused: boolean;
   }) => React.ReactElement;
