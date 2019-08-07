@@ -31,7 +31,7 @@ function StackNavigator({
   });
 
   return (
-    <KeyboardManager enabled={keyboardHandlingEnabled === true}>
+    <KeyboardManager enabled={keyboardHandlingEnabled !== false}>
       {props => (
         <StackView
           state={state}
