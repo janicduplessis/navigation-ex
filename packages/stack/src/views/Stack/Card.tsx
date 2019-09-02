@@ -7,6 +7,7 @@ import {
   StyleProp,
   ViewStyle,
   Platform,
+  InteractionManager,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import {
@@ -342,7 +343,13 @@ export default class Card extends React.Component<Props> {
     finished: new Value(FALSE),
   };
 
+  private interactionHandle: number | null = null;
+
   private handleTransitionEnd = () => {
+    if (this.interactionHandle !== null) {
+      InteractionManager.clearInteractionHandle(this.interactionHandle);
+    }
+
     this.isRunningAnimation = false;
     this.interpolatedStyle = this.getInterpolatedStyle(
       this.props.styleInterpolator,
@@ -380,6 +387,8 @@ export default class Card extends React.Component<Props> {
         set(this.isVisible, isVisible),
         startClock(this.clock),
         call([this.isVisible], ([value]: ReadonlyArray<Binary>) => {
+          this.interactionHandle = InteractionManager.createInteractionHandle();
+
           const { onTransitionStart } = this.props;
           this.noAnimationStartedSoFar = false;
           this.isRunningAnimation = true;
