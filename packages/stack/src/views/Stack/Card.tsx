@@ -108,6 +108,7 @@ const {
   multiply,
   neq,
   onChange,
+  or,
   set,
   spring,
   sub,
@@ -230,6 +231,14 @@ export default class Card extends React.Component<Props> {
     gestureEnabled: true,
   };
 
+  componentDidMount() {
+    // Delay starting the animation after the new screen
+    // has rendered to prevent dropping frames.
+    requestAnimationFrame(() => {
+      this.canStartAnimations.setValue(TRUE);
+    });
+  }
+
   componentDidUpdate(prevProps: Props) {
     const { layout, gestureDirection, closing } = this.props;
     const { width, height } = layout;
@@ -274,6 +283,7 @@ export default class Card extends React.Component<Props> {
     }
   }
 
+  private canStartAnimations = new Value<Binary>(FALSE);
   private isVisible = new Value<Binary>(TRUE);
   private isVisibleValue: Binary = TRUE;
   private nextIsVisible = new Value<Binary | -1>(UNSET);
@@ -357,35 +367,39 @@ export default class Card extends React.Component<Props> {
     const { open: openingSpec, close: closingSpec } = this.props.transitionSpec;
 
     return cond(eq(this.props.current, isVisible), NOOP_NODE, [
-      cond(clockRunning(this.clock), NOOP_NODE, [
-        // Animation wasn't running before
-        // Set the initial values and start the clock
-        set(this.toValue, isVisible),
-        // The velocity value is ideal for translating the whole screen
-        // But since we have 0-1 scale, we need to adjust the velocity
-        set(
-          this.transitionVelocity,
-          multiply(
-            cond(
-              this.distance,
-              divide(this.velocity, this.distance),
-              FALSE_NODE
-            ),
-            -1
-          )
-        ),
-        set(this.frameTime, FALSE_NODE),
-        set(this.transitionState.time, FALSE_NODE),
-        set(this.transitionState.finished, FALSE_NODE),
-        set(this.isVisible, isVisible),
-        startClock(this.clock),
-        call([this.isVisible], ([value]: ReadonlyArray<Binary>) => {
-          const { onTransitionStart } = this.props;
-          this.noAnimationStartedSoFar = false;
-          this.isRunningAnimation = true;
-          onTransitionStart && onTransitionStart({ closing: !value });
-        }),
-      ]),
+      cond(
+        or(clockRunning(this.clock), eq(this.canStartAnimations, FALSE)),
+        NOOP_NODE,
+        [
+          // Animation wasn't running before
+          // Set the initial values and start the clock
+          set(this.toValue, isVisible),
+          // The velocity value is ideal for translating the whole screen
+          // But since we have 0-1 scale, we need to adjust the velocity
+          set(
+            this.transitionVelocity,
+            multiply(
+              cond(
+                this.distance,
+                divide(this.velocity, this.distance),
+                FALSE_NODE
+              ),
+              -1
+            )
+          ),
+          set(this.frameTime, FALSE_NODE),
+          set(this.transitionState.time, FALSE_NODE),
+          set(this.transitionState.finished, FALSE_NODE),
+          set(this.isVisible, isVisible),
+          startClock(this.clock),
+          call([this.isVisible], ([value]: ReadonlyArray<Binary>) => {
+            const { onTransitionStart } = this.props;
+            this.noAnimationStartedSoFar = false;
+            this.isRunningAnimation = true;
+            onTransitionStart && onTransitionStart({ closing: !value });
+          }),
+        ]
+      ),
       cond(
         eq(isVisible, TRUE_NODE),
         openingSpec.animation === 'spring'
