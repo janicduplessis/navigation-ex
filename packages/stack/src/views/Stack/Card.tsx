@@ -263,6 +263,10 @@ export default class Card extends React.Component<Props> {
   }
 
   componentWillUnmount(): void {
+    if (this.interactionHandle !== null) {
+      InteractionManager.clearInteractionHandle(this.interactionHandle);
+    }
+
     // It might sometimes happen than animation will be unmounted
     // during running. However, we need to invoke listener onClose
     // manually in this case
