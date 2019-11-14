@@ -4,6 +4,8 @@ import {
   ScreenStackHeaderConfig,
   // @ts-ignore
   ScreenStackHeaderRightView,
+  // @ts-ignore
+  ScreenStackHeaderLeftView,
   // eslint-disable-next-line import/no-unresolved
 } from 'react-native-screens';
 import { Route } from '@react-navigation/core';
@@ -17,6 +19,7 @@ export default function HeaderConfig(props: Props) {
   const {
     route,
     title,
+    headerLeft,
     headerRight,
     headerTitle,
     headerBackTitle,
@@ -64,6 +67,9 @@ export default function HeaderConfig(props: Props) {
       largeTitleFontSize={headerLargeTitleStyle.fontSize}
       backgroundColor={headerStyle.backgroundColor}
     >
+      {headerLeft !== undefined ? (
+        <ScreenStackHeaderLeftView>{headerLeft()}</ScreenStackHeaderLeftView>
+      ) : null}
       {headerRight !== undefined ? (
         <ScreenStackHeaderRightView>{headerRight()}</ScreenStackHeaderRightView>
       ) : null}
